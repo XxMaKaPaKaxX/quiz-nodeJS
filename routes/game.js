@@ -135,8 +135,10 @@ const gameRoutes = (app) => {
         chart[3] = tempVar;
 
         res.json({
-            chart
-        })    
+            chart,
+            answers: questions[goodAnswers].answers
+        })
+        questionToCrowdUsed = true;
     })
 }
 

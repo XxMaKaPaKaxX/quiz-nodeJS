@@ -6,15 +6,16 @@ const callToFriendBtn = document.querySelector('#callToFriend');
 const halfOnHalfBtn = document.querySelector('#halfOnHalf');
 const questionToCrowdBtn = document.querySelector('#questionToCrowd');
 const tipDiv = document.querySelector('#tip');
+const gameInfo = document.querySelector('#game-info');
 
 const fillQuestionElements = ({question, answers, winner, loser}) => {
     if(winner === true) {
         gameBoardDiv.style.display = 'none';
-        goodAnswersSpan.textContent = 'Wygrana! Ciesz się ze zwycięstwa!';
+        gameInfo.textContent = 'Wygrana! Ciesz się ze zwycięstwa!';
         return;
     } else if (loser === true) {
         gameBoardDiv.style.display = 'none';
-        goodAnswersSpan.textContent = 'Przegrałes :( Może innym razem się uda...';
+        gameInfo.textContent = 'Przegrałes :( Może innym razem się uda...';
         return;
     }
     questionDiv.textContent = question;
@@ -76,6 +77,22 @@ const getHalfOnHalfTip = () => {
 }
 halfOnHalfBtn.addEventListener('click', getHalfOnHalfTip);
 
+const handleUseCrowdHelp = (data) => {
+
+    if (data.text) {
+        tipDiv.textContent = data.text;
+        return;
+    }
+
+    const {chart, answers} = data;
+    const tempArr = [];
+    
+    answers.forEach((answer, index) => {
+        tempArr.push(`${answer} - ${chart[index]}%`)
+    })
+    const text = `Wynik głosowania publiczności: ${tempArr.join(', ')};`;
+    tipDiv.textContent = text;
+}
 
 const useCrowdHelp = () => {
     
@@ -83,7 +100,7 @@ const useCrowdHelp = () => {
         method: 'GET',
     })
         .then(res => res.json())
-        .then(data => console.log(data));
+        .then(data => handleUseCrowdHelp(data));
     
 }
 questionToCrowdBtn.addEventListener('click', useCrowdHelp);
