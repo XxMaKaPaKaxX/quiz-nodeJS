@@ -2,8 +2,10 @@ const questionDiv = document.getElementById('question');
 const answersButtons = [...document.querySelectorAll('.answer-btn')];
 const goodAnswersSpan = document.querySelector('#good-answers');
 const gameBoardDiv = document.querySelector('#game-board');
-
-
+const callToFriendBtn = document.querySelector('#callToFriend');
+const halfOnHalfBtn = document.querySelector('#halfOnHalf');
+const questionToCrowdBtn = document.querySelector('#questionToCrowd');
+const tipDiv = document.querySelector('#tip');
 
 const fillQuestionElements = ({question, answers, winner, loser}) => {
     if(winner === true) {
@@ -22,7 +24,7 @@ const fillQuestionElements = ({question, answers, winner, loser}) => {
 }
 
 const getNextQuestion = () => {
-    fetch('http://localhost:3001/question', {
+    fetch('/question', {
         method: 'GET'
     })
         .then(resp => resp.json())
@@ -47,3 +49,42 @@ const sendAnswer = (answerIndex) => {
 answersButtons.forEach((btn, index) => {
     btn.addEventListener('click', () => sendAnswer(index))
 })
+
+const callToFriend = () => {
+    const getTip = (data) => {
+        tipDiv.textContent = data.text
+    }
+    fetch(`/help/friend`, {
+        method: 'GET',
+    })
+        .then(res => res.json())
+        .then(data => getTip(data));    
+}
+
+callToFriendBtn.addEventListener('click', callToFriend);
+
+const getHalfOnHalfTip = () => {
+    const getTip = (data) => {
+        tipDiv.textContent = data.text
+    }
+    fetch(`/help/halfonhalf`, {
+        method: 'GET',
+    })
+        .then(res => res.json())
+        .then(data => getTip(data));
+    
+}
+halfOnHalfBtn.addEventListener('click', getHalfOnHalfTip);
+
+
+const useCrowdHelp = () => {
+    
+    fetch(`/help/crowd`, {
+        method: 'GET',
+    })
+        .then(res => res.json())
+        .then(data => console.log(data));
+    
+}
+questionToCrowdBtn.addEventListener('click', useCrowdHelp);
+

@@ -70,6 +70,72 @@ const gameRoutes = (app) => {
         res.json({
             correct: isGoodAnswer,
             goodAnswers
+        })
+
+    })
+
+    app.get(`/help/friend`, (req, res) => {
+        if (callToFriendUsed) {
+            return res.json({
+                text: 'To koło ratunkowe było już wykorzystane.'
+            });
+        }
+        const question = questions[goodAnswers];
+        const doesFriendKnowAnswer = Math.random() > 0.3;
+
+        res.json({
+            text: doesFriendKnowAnswer 
+                ? `Hmm... Wydaje mi się, że odpowiedź to ${question.answers[question.correctAnswerIndex]}` 
+                : `Niestety nie znam odpowiedzi`
+        })
+
+        callToFriendUsed = true;
+    })
+
+    app.get(`/help/halfonhalf`, (req, res) => {
+        if (halfOnHalfUsed) {
+            return res.json({
+                text: 'To koło ratunkowe było już wykorzystane.'
+            });
+        }
+        
+        const answersWithoutRightAnswer = questions[goodAnswers].answers.filter((answer, index) => index !== questions[goodAnswers].correctAnswerIndex);
+        const randomIncorrectAnswerIndex = ~~((Math.random()) * answersWithoutRightAnswer.length);
+
+        const coorectAnswer = questions[goodAnswers].answers[questions[goodAnswers].correctAnswerIndex];
+        const incorrectAnswer = answersWithoutRightAnswer[randomIncorrectAnswerIndex];
+        const answerForTip = Math.random() > 0.5 ? [coorectAnswer, incorrectAnswer] : [incorrectAnswer, coorectAnswer];
+
+        res.json({
+            text: `poprawna odpowiedź to ${answerForTip[0]} albo ${answerForTip[1]}`
+        })
+
+        halfOnHalfUsed = true;
+    })
+ 
+    app.get(`/help/crowd`, (req, res) => {
+        if (questionToCrowdUsed) {
+            return res.json({
+                text: 'To koło ratunkowe było już wykorzystane.'
+            });
+        }
+
+        const chart = [10, 20, 30, 40];
+        
+        for (let i = chart.length - 1; i> 0; i -= 1) {
+            const change = ~~(Math.random() * 20 - 10);
+            chart[i] += change;
+            chart[i -1] -= change;            
+        }
+
+        const question = questions[goodAnswers];        
+        const {correctAnswerIndex} = question;
+        const tempVar = chart[correctAnswerIndex];
+        chart[correctAnswerIndex] = chart[3]
+        chart[3] = tempVar;
+
+        res.json({
+            chart
         })    
     })
 }
