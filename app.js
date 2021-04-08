@@ -3,7 +3,9 @@ const express = require('express');
 const gameRoutes = require('./routes/game')
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || '3000';
+
+app.set('port', port);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
